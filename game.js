@@ -3,6 +3,7 @@ const choices = Array.from(document.getElementsByClassName("choice-text"));
 const progressText = document.getElementById('progressText');
 const scoreText = document.getElementById('score');
 const progressBarFull = document.getElementById('progressBarFull');
+const loader = document.getElementById('loader');
 
 let currentQuestion = {};
 let acceptingAnswers = false;
@@ -10,41 +11,39 @@ let score = 0;
 let questionCounter = 0;
 let availableQuestions = [];
 
-let questions = [
-    {
-      question: "Inside which HTML element do we put the javascript?",
-      choice1: "<Script>",
-      choice2: "<Javascript>",
-      choice3: "<js>",
-      choice4: "<scripting>",
-      answer: 1,
-    },
-    {
-      question:
-        "what is the correct systanx to referring to an external script called 'xxx.js' ?",
-      choice1: "<script href='xxx.js>",
-      choice2: "<script name='xxx.js'>",
-      choice3: "<script src='xxx.js'>",
-      choice4: "<script file='xxx.js>",
-      answer: 3,
-    },
-    {
-      question: "How do you write 'Hello world' in an alert box?",
-      choice1: "msBox('Hello world');",
-      choice2: "alertBox('Hello world');",
-      choice3: "msg('Hello world');",
-      choice4: "alert('Hello world');",
-      answer: 4,
-    },
-    {
-        question: "How do you write 'Hello world' to console?",
-        choice1: "console.log('Hello world');",
-        choice2: "alertBox.log('Hello world');",
-        choice3: "msg.log('Hello world');",
-        choice4: "alert('Hello world');",
-        answer: 1,
-      },
-  ];
+let questions = [];
+fetch("https://opentdb.com/api.php?amount=10&category=18&difficulty=easy&type=multiple")
+  .then(res => {
+    return res.json();
+  })
+  .then(loadedQuestions => {
+    console.log(loadedQuestions.results);
+    questions = loadedQuestions.results.map( loadedQuestions => {
+      const formattedQuestion = {
+        question: loadedQuestions.question
+      };
+
+      const answerChoices = [...loadedQuestions.incorrect_answers];
+      formattedQuestion.answer = Math.floor(Math.random() * 3) + 1;
+      answerChoices.splice(formattedQuestion.answer -1, 0, loadedQuestions.correct_answer);
+
+      answerChoices.forEach((choice, index) =>{
+        formattedQuestion["choice" + (index+1)] = choice;
+      })
+
+      return formattedQuestion;
+    })
+
+  
+
+   startGame();
+  })
+  .catch(err => {
+    console.error(err);
+  });
+
+
+
   
 
 const CORRECT_BONUS = 10;
@@ -56,7 +55,11 @@ startGame = () => {
   availableQuestions = [...questions];
   console.log(availableQuestions);
   getNewQuestion();
+
+  game.classList.remove("hidden");
+  loader.classList.add("hidden");
 };
+
 getNewQuestion = () => {
   // If there are no more questions or the maximum number of questions has been reached
   if (availableQuestions.length == 0 || questionCounter >= MAX_QUESTIONS) {
@@ -125,5 +128,3 @@ setTimeout(() => {
     score +=num;
     scoreText.innerText = score;
   }
-  
-startGame();
