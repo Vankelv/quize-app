@@ -4,6 +4,7 @@ const progressText = document.getElementById('progressText');
 const scoreText = document.getElementById('score');
 const progressBarFull = document.getElementById('progressBarFull');
 const loader = document.getElementById('loader');
+const timerDisplay = document.getElementById('timeLeft');
 
 let currentQuestion = {};
 let acceptingAnswers = false;
@@ -68,7 +69,23 @@ getNewQuestion = () => {
       // Redirect to the end page
       return window.location.assign('/end.html');
   }
+  // Reset the timer display element
+timerDisplay.innerText = '30';
 
+// set initial time left to 30 seconds
+let timeLeft = 30;
+
+  // Start the timer and update the timer display element every second
+  const timer = setInterval(() => {
+    timeLeft--;
+    timerDisplay.innerText = ` ${timeLeft}`;
+
+    if (timeLeft == 0) {
+      // Time's up! Clear the timer and move on to the next question
+      clearInterval(timer);
+      getNewQuestion();
+    }
+  }, 1000);
   // Increment the question counter and update the progress text and bar
   questionCounter++;
   progressText.innerText = `Question ${questionCounter}/${MAX_QUESTIONS}`;
@@ -94,6 +111,7 @@ getNewQuestion = () => {
 
   // Set acceptingAnswers to true to allow the user to select an answer
   acceptingAnswers = true;
+
 };
 
 
