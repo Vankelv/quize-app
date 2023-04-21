@@ -12,7 +12,7 @@ let availableQuestions = [];
 
 let questions = [
     {
-      question: "inside which HTML element do we put the javascript?",
+      question: "Inside which HTML element do we put the javascript?",
       choice1: "<Script>",
       choice2: "<Javascript>",
       choice3: "<js>",
