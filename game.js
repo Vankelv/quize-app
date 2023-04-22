@@ -60,7 +60,7 @@ startGame = () => {
   game.classList.remove("hidden");
   loader.classList.add("hidden");
 };
-
+let timerInterval;
 getNewQuestion = () => {
   // If there are no more questions or the maximum number of questions has been reached
   if (availableQuestions.length == 0 || questionCounter >= MAX_QUESTIONS) {
@@ -68,21 +68,21 @@ getNewQuestion = () => {
       localStorage.setItem("mostRecentScore", score);
       // Redirect to the end page
       return window.location.assign('/end.html');
-  }
+  }// Clear the previous timer interval
+  clearInterval(timerInterval);
   // Reset the timer display element
-timerDisplay.innerText = '30';
-
-// set initial time left to 30 seconds
-let timeLeft = 30;
+  timerDisplay.innerText = '30';
+  // set initial time left to 30 seconds
+  let timeLeft = 30;
 
   // Start the timer and update the timer display element every second
-  const timer = setInterval(() => {
+  timerInterval = setInterval(() => {
     timeLeft--;
     timerDisplay.innerText = ` ${timeLeft}`;
 
     if (timeLeft == 0) {
       // Time's up! Clear the timer and move on to the next question
-      clearInterval(timer);
+      clearInterval(timerInterval);
       getNewQuestion();
     }
   }, 1000);
